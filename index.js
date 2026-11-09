@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@project.bl7auak.mongodb.net/`
+const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@project.bl7auak.mongodb.net/`;
 
 
 const client = new MongoClient(uri, {
@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
 
     const database = client.db("taskBridgeDB");
     const tasksCollection = database.collection("tasks");
@@ -38,10 +38,18 @@ async function run() {
     });
 
     // Get all tasks
-    // app.get("/tasks", async (req, res) => {
-    //   const result = await tasksCollection.find().toArray();
-    //   res.send(result);
-    // });
+    app.get("/tasks", async (req, res) => {
+      const result = await tasksCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Add a new task
+    app.post("/tasks", async (req,res)=>{
+      const task = req.body;
+      console.log(task);
+      const result = await tasksCollection.insertOne(task);
+      res.send(result);
+    })
 
     
 
@@ -55,12 +63,8 @@ run().catch(console.dir);
 
 
 
-
-// Check route
-app.get('/', (req, res)=>{
-    res.send('TaskBridge server is running')
-})
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+// Vercel deployment
+module.exports = app;
