@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const database = client.db("taskBridgeDB");
     const tasksCollection = database.collection("tasks");
@@ -63,8 +63,10 @@ run().catch(console.dir);
 
 
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-// Vercel deployment
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    });
+}
+
 module.exports = app;
